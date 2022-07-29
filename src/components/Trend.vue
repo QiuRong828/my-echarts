@@ -1,34 +1,83 @@
 <template>
   <div class="com-container">
+    <div class="title" :style="comStyle">
+      <span> {{ '▎' + showTitle }} </span>
+      <span
+        :style="comStyle"
+        class="iconfont title-icon"
+        @click="showChoice = !showChoice"
+      >
+        &#xe6eb;</span
+      >
+      <div class="select-con" v-show="showChoice">
+        <div
+          :style="marginStyle"
+          class="select-item"
+          v-for="item in selectTypes"
+          :key="item.key"
+          @click="handeSelect(item.key)"
+          v-show="item.key !== choiceType"
+        >
+          {{ item.text }}
+        </div>
+      </div>
+    </div>
     <div class="com-chart" ref="trend_ref"></div>
   </div>
 </template>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-      chartInstance: null,
-      allData: null
+      chartInstane: null,
+      allData: [],
+      showChoice: false,
+      choiceType: 'map',
+      titleFontSize: 0
     }
   },
-  mounted () {
+  computed: {
+    selectTypes() {
+      if (this.allData) {
+        return this.allData.type
+      }
+    },
+    showTitle() {
+      if (!this.allData) {
+        return []
+      } else {
+        return this.allData[this.choiceType].title
+      }
+    },
+    comStyle() {
+      return {
+        fontSize: this.titleFontSize + 'px'
+      }
+    },
+    marginStyle() {
+      return {
+        marginLeft: this.titleFontSize + 'px'
+      }
+    }
+  },
+  mounted() {
     this.initChart()
     this.getData()
     window.addEventListener('resize', this.screenAdapter)
     this.screenAdapter()
   },
-  destroyed () {
+  destroyed() {
     window.removeEventListener('resize', this.screenAdapter)
   },
   methods: {
-    initChart () {
-      this.chartInstance = this.$echarts.init(this.$refs.trend_ref, 'chalk')
+    initChart() {
+      this.chartInstane = this.$echarts.init(this.$refs.trend_ref, 'chalk')
       const initOption = {
         grid: {
           left: '3%',
-          top: '35%',
           right: '4%',
+          top: '35%',
           bottom: '1%',
           containLabel: true
         },
@@ -48,16 +97,14 @@ export default {
           type: 'value'
         }
       }
-      this.chartInstance.setOption(initOption)
+      this.chartInstane.setOption(initOption)
     },
-    async getData () {
-      const { data: ret } = await this.$http.get('trend')
-      // console.log(ret);
-      this.allData = ret
+    async getData() {
+      const { data: res } = await this.$http.get('trend')
+      this.allData = res
       this.updateChart()
     },
-    updateChart () {
-      // 半透明的颜色值
+    updateChart() {
       const colorArr1 = [
         'rgba(11, 168, 44, 0.5)',
         'rgba(44, 110, 255, 0.5)',
@@ -73,46 +120,71 @@ export default {
         'rgba(254, 33, 30, 0)',
         'rgba(250, 105, 0, 0)'
       ]
-      // 类目轴的数据
-      const timerArr = this.allData.common.month
-      // y轴的数据
-      const valueArr = this.allData.map.data
+
+      const timeArr = this.allData.common.month
+      const valueArr = this.allData[this.choiceType].data
       const seriesArr = valueArr.map((item, index) => {
         return {
           name: item.name,
           type: 'line',
           data: item.data,
-          stack: 'map',
+          stack: this.choiceType,
           areaStyle: {
             color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              {},
-              {}
+              { offset: 0, color: colorArr1[index] },
+              { offset: 1, color: colorArr2[index] }
             ])
           }
         }
       })
-      // 图例的数据
-      const legendArr = valueArr.map((item) => {
+      const legenArr = valueArr.map((item) => {
         return item.name
       })
       const dataOption = {
         xAxis: {
-          data: timerArr
+          data: timeArr
         },
         legend: {
-          data: legendArr
+          data: legenArr
         },
         series: seriesArr
       }
-      this.chartInstance.setOption(dataOption)
+      this.chartInstane.setOption(dataOption)
     },
-    screenAdapter () {
-      const adapterOption = {}
-      this.chartInstance.setOption(adapterOption)
-      this.chartInstance.resize()
+    screenAdapter() {
+      this.titleFontSize = (this.$refs.trend_ref.offsetWidth / 100) * 3.6
+      const adapterOption = {
+        legend: {
+          itemWidth: this.titleFontSize,
+          itemHeight: this.titleFontSize,
+          itemGap: this.titleFontSize,
+          textStyle: {
+            fontSize: this.titleFontSize / 2
+          }
+        }
+      }
+      this.chartInstane.setOption(adapterOption)
+      this.chartInstane.resize()
+    },
+    handeSelect(type) {
+      this.choiceType = type
+      this.showChoice = false
+      this.getData()
     }
   }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.title {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  z-index: 99;
+  color: #fff;
+  .title-icon {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+}
+</style>

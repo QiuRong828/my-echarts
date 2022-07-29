@@ -6,33 +6,31 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       chartInstance: null,
-      allDate: null,
+      allData: [],
       currentPage: 1,
       totalPage: 0,
-      timerId: null
+      timer: null
     }
   },
-  mounted () {
+  mounted() {
     this.initChart()
     this.getData()
     window.addEventListener('resize', this.screenAdapter)
     this.screenAdapter()
   },
-  destroyed () {
-    clearInterval(this.timerId)
+  destroyed() {
+    clearInterval(this.timer)
     window.removeEventListener('resize', this.screenAdapter)
   },
   methods: {
-    // 初始化echartinstance对象
-    initChart () {
+    initChart() {
       this.chartInstance = this.$echarts.init(this.$refs.seller_ref, 'chalk')
       const initOption = {
         title: {
-          text: '| 商家销售统计',
-
+          text: '▎商家销售统计',
           left: 20,
           top: 20
         },
@@ -70,15 +68,9 @@ export default {
               }
             },
             itemStyle: {
-              color: new this.$echarts.graphic.LinearGradient(0, 0, 1, 0, [
-                {
-                  offset: 0,
-                  color: '#5052EE'
-                },
-                {
-                  offset: 1,
-                  color: '#AB6EE5'
-                }
+              color: new this.$echarts.graphic.LinearGradient(0, 0, 1, 1, [
+                { offset: 0, color: '#5052EE' },
+                { offset: 1, color: '#AB6EE5' }
               ])
             }
           }
@@ -86,31 +78,28 @@ export default {
       }
       this.chartInstance.setOption(initOption)
       this.chartInstance.on('mouseover', () => {
-        clearInterval(this.timerId)
+        clearInterval(this.timer)
       })
       this.chartInstance.on('mouseout', () => {
         this.startInterval()
       })
     },
-    // 获取服务器的数据
-    async getData () {
+    async getData() {
       const { data: ret } = await this.$http.get('seller')
-      this.allDate = ret
-      this.allDate.sort((a, b) => {
-        return a.value - b.value
-      })
+      console.log(ret)
+      this.allData = ret
+      this.allData.sort((a, b) => b.value - a.value)
       this.totalPage =
-        this.allDate.length % 5 === 0
-          ? this.allDate.length / 5
-          : this.allDate.length / 5 + 1
-      this.updateChart()
+        this.allData.length % 5 === 0
+          ? this.allData.length / 5
+          : this.allData.length / 5 + 1
+      this.updataChart()
       this.startInterval()
     },
-    // 更新图表
-    updateChart () {
+    updataChart() {
       const start = (this.currentPage - 1) * 5
       const end = this.currentPage * 5
-      const showData = this.allDate.slice(start, end)
+      const showData = this.allData.slice(start, end)
       const sellerNames = showData.map((item) => {
         return item.name
       })
@@ -121,7 +110,6 @@ export default {
         yAxis: {
           data: sellerNames
         },
-
         series: [
           {
             data: sellerValues
@@ -130,19 +118,19 @@ export default {
       }
       this.chartInstance.setOption(dataOption)
     },
-    startInterval () {
-      if (this.timerId) {
-        clearInterval(this.startInterval)
+    startInterval() {
+      if (this.timer) {
+        clearInterval(this.timer)
       }
-      this.timerId = setInterval(() => {
+      this.timer = setInterval(() => {
         this.currentPage++
         if (this.currentPage > this.totalPage) {
           this.currentPage = 1
         }
-        this.updateChart()
-      }, 2000)
+        this.updataChart()
+      }, 3000)
     },
-    screenAdapter () {
+    screenAdapter() {
       // console.log(this.$refs.seller_ref.offsetWidth);
       const titleFontSize = (this.$refs.seller_ref.offsetWidth / 100) * 3.6
       const adapterOption = {
@@ -151,7 +139,6 @@ export default {
             fontSize: titleFontSize
           }
         },
-
         tooltip: {
           axisPointer: {
             lineStyle: {
@@ -162,6 +149,7 @@ export default {
         series: [
           {
             barWidth: titleFontSize,
+
             itemStyle: {
               barBorderRadius: [0, titleFontSize / 2, titleFontSize / 2, 0]
             }

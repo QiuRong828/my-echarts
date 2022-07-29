@@ -1,18 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import SellerPage from '@/views/SellerPage'
-import TrendPage from '@/views/TrendPage'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/sellerpage',
-    component: SellerPage
+    path: '/',
+    name: 'sellerPage',
+    component: () => import('../views/SellerPage.vue')
   },
   {
-    path: '/TrendPage',
-    component: TrendPage
+    path: '/trend',
+    name: 'trend',
+    component: () => import('../views/TrendPage.vue')
   }
 ]
 
