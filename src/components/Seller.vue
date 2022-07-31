@@ -1,6 +1,6 @@
 <template>
   <div class="com-container">
-    <div class="com-chart" ref="seller_ref"></div>
+    <div class="com-chart" ref="seller_ref" style="height: 200px"></div>
   </div>
 </template>
 

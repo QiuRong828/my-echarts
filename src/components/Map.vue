@@ -1,5 +1,5 @@
 <template>
-  <div class="com-container" style="height: 600px" @dblclick="revertMap">
+  <div class="com-container" style="height: 400px" @dblclick="revertMap">
     <div class="com-chart" ref="map_ref"></div>
   </div>
 </template>

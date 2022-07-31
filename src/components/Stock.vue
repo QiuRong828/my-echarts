@@ -1,6 +1,6 @@
 <template>
   <div class="com-container">
-    <div class="com-chart" ref="stock_ref" style="height: 600px"></div>
+    <div class="com-chart" ref="stock_ref" style="height: 300px"></div>
   </div>
 </template>
 
@@ -70,7 +70,7 @@ export default {
       const seriesArr = showData.map((item, index) => {
         return {
           type: 'pie',
-          radius: [110, 100],
+          // radius: [110, 100],
           center: centerArr[index],
           hoverAnimation: false,
           labelLine: {
@@ -113,7 +113,7 @@ export default {
     },
     screenAdapter() {
       const titleFontSize = (this.$refs.stock_ref.offsetWidth / 100) * 3.6
-      const innerRadius = titleFontSize * 2
+      const innerRadius = titleFontSize * 3.1
       const outterRadius = innerRadius * 1.125
       const adapterOption = {
         title: {

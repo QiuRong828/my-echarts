@@ -1,5 +1,5 @@
 <template>
-  <div class="com-container" style="height: 600px">
+  <div class="com-container" style="height: 200px">
     <div class="com-chart" ref="rank_ref"></div>
   </div>
 </template>

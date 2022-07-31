@@ -1,5 +1,5 @@
 <template>
-  <div class="com-container" style="height: 600px">
+  <div class="com-container" style="height: 400px">
     <div class="com-chart" ref="hot_ref"></div>
     <span class="iconfont arr-left" @click="toLeft" :style="comStyle"
       >&#xe6ef;</span
@@ -135,8 +135,8 @@ export default {
           }
         },
         legend: {
-          itemWidth: this.titleFontSize / 2,
-          itemHeight: this.titleFontSize / 2,
+          itemWidth: this.titleFontSize,
+          itemHeight: this.titleFontSize,
           itemGap: this.titleFontSize / 2,
           textStyle: {
             fontSize: this.titleFontSize / 2

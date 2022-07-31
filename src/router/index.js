@@ -1,38 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import ScreenPage from '@/views/ScreenPage'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'sellerPage',
-    component: () => import('../views/SellerPage.vue')
+    redirect: '/screen'
   },
   {
-    path: '/trend',
-    name: 'trend',
-    component: () => import('../views/TrendPage.vue')
-  },
-  {
-    path: '/map',
-    name: 'map',
-    component: () => import('../views/MapPage.vue')
-  },
-  {
-    path: '/rank',
-    name: 'rank',
-    component: () => import('../views/RankPage.vue')
-  },
-  {
-    path: '/hot',
-    name: 'hot',
-    component: () => import('../views/HotPage.vue')
-  },
-  {
-    path: '/stock',
-    name: 'stock',
-    component: () => import('../views/StockPage.vue')
+    path: '/screen',
+    component: ScreenPage
   }
 ]
 
