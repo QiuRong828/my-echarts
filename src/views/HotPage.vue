@@ -1,0 +1,16 @@
+<template>
+  <div>
+    <Hot></Hot>
+  </div>
+</template>
+
+<script>
+import Hot from '@/components/Hot.vue'
+export default {
+  components: {
+    Hot
+  }
+}
+</script>
+
+<style lang="scss" scoped></style>
